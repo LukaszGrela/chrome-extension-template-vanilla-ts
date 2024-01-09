@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Extension Name",
+  "version": "0.0.1",
+  "description": "Extension description",
+  "icons": {
+    "16": "assets/16x16.png",
+    "48": "assets/48x48.png",
+    "128": "assets/128x128.png"
+  },
+  "homepage_url": "http://greladesign.com/blog/tablist-chrome-extension/",
+  "action": {
+    "default_icon": {
+      "16": "assets/16x16.png",
+      "24": "assets/24x24.png",
+      "32": "assets/32x32.png"
+    },
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "js/background.js"
+  },
+  "permissions": [
+    "tabs",
+    "tabGroups"
+  ]
+}
