@@ -1,9 +1,11 @@
 (async () => {
   console.log('Background entry point', chrome);
 
-  const updateBadge = async (windowId?: number) => {
-    if (windowId !== undefined && windowId > 0) {
-      const tabs = await chrome.tabs.query({ windowId });
+  let currentWindowId = -2;
+
+  const updateBadge = async () => {
+    if (currentWindowId !== undefined && currentWindowId > 0) {
+      const tabs = await chrome.tabs.query({ windowId: currentWindowId });
 
       const badgeText = {
         text: tabs.length > 0 ? '' + tabs.length : '',
@@ -14,8 +16,22 @@
     }
   };
 
-  chrome.windows.onFocusChanged.addListener(updateBadge);
+  const handleFocusChange = (windowId: number) => {
+    if (windowId > 0) {
+      currentWindowId = windowId;
+
+      updateBadge();
+    }
+  };
+
+  chrome.tabs.onAttached.addListener(updateBadge);
+  chrome.tabs.onRemoved.addListener(updateBadge);
+  chrome.tabs.onDetached.addListener(updateBadge);
+  chrome.tabs.onCreated.addListener(updateBadge);
+
+  chrome.windows.onFocusChanged.addListener(handleFocusChange);
   // initial badge update
   const window = await chrome.windows.getLastFocused();
-  updateBadge(window.id);
+  currentWindowId = window.id || -2;
+  updateBadge();
 })();
